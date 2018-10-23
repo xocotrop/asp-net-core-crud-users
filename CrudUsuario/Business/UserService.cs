@@ -49,8 +49,14 @@ namespace CrudUsuario.Business
 
         public async Task Insert(User user)
         {
+
+            if (string.IsNullOrWhiteSpace(user.Password))
+            {
+                throw new BusinessException("error_password", $"Password can not be empty");
+            }
+
             var userBd = await GetUser(user.Email);
-            if(userBd != null)
+            if (userBd != null)
             {
                 throw new BusinessException("email_in_use", $"{user.Email} is already in use");
             }
