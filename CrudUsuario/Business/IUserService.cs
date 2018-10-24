@@ -13,5 +13,6 @@ namespace CrudUsuario.Business
         Task ChangePassword(User user, string password, string newPassword);
         Task Insert(User user);
         Task<IEnumerable<User>> List();
+        Task Remove(User user);
     }
 }

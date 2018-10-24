@@ -44,7 +44,7 @@ namespace CrudUsuario.Init
 
         public static void ConfigureJwtService(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtConfiguration = new JwtConfiguration(configuration);
+            var jwtConfiguration = new JwtConfiguration();
             services.AddSingleton(jwtConfiguration);
 
             var tokenConfig = new TokenConfig();

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace CrudUsuario.Controllers
 {
     [Route("api/[controller]")]
-    public class LoginController : Controller
+    public class LoginController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly TokenConfig _tokenConfigurations;
@@ -26,11 +26,11 @@ namespace CrudUsuario.Controllers
         }
 
         [HttpPost("")]
-        public async Task< ActionResult<AuthOk>> Login([FromBody]UserModel userModel)
+        public async Task<ActionResult<AuthOk>> Login([FromBody]UserModel userModel)
         {
             var user = await _userService.GetUserPassword(userModel.Email, userModel.Password);
 
-            if(user != null)
+            if (user != null)
             {
                 var identity = new ClaimsIdentity(new GenericIdentity(user.Email, "Login"),
                     new[]

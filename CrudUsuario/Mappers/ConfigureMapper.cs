@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CrudUsuario.Mapper
+namespace CrudUsuario.Mappers
 {
     public class ConfigureMapper : Profile
     {

@@ -9,10 +9,7 @@ namespace CrudUsuario.Exceptions
     {
         public string Code { get; }
 
-        public BusinessException(string message, params object[] args) : this(string.Empty, message, args)
-        {
-
-        }
+       
 
         public BusinessException(string code, string message, params object[] args) : this(null, code, message, args)
         {
@@ -24,9 +21,6 @@ namespace CrudUsuario.Exceptions
             Code = code;
         }
 
-        public BusinessException(string code)
-        {
-
-        }
+        
     }
 }

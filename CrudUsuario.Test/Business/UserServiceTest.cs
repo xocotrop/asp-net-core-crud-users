@@ -32,6 +32,7 @@ namespace CrudUsuario.Test.Business
         {
             _userService = null;
             _encrypter = null;
+            _ctx.Dispose();
             _ctx = null;
         }
 
@@ -41,7 +42,7 @@ namespace CrudUsuario.Test.Business
             var u = new Entity.User()
             {
                 Name = "Igor Teste",
-                Email = "igorteste@teste.com",
+                Email = "igorteste@teste.com.br",
 
             };
             u.SetPassword("teste", _encrypter);
@@ -50,11 +51,37 @@ namespace CrudUsuario.Test.Business
         }
 
         [Fact]
+        public void InsertUser_Error()
+        {
+            var u = new Entity.User()
+            {
+                Name = "Igor Teste",
+                Email = "igorteste@teste.com.br",
+
+            };
+            var ex = Assert.Throws<BusinessException>(() => u.SetPassword("", _encrypter));
+            Assert.Equal("password can not be empty", ex.Message);
+        }
+
+        [Fact]
+        public async Task RemoveUser()
+        {
+            var u = await _userService.GetUser("igorteste3@teste.com");
+
+            await _userService.Remove(u);
+
+            var u2 = await _userService.GetUser("igorteste3@teste.com");
+
+            
+            Assert.Equal((Entity.User) null, u2);
+        }
+
+        [Fact]
         public async void GetUser_Email_Success()
         {
             var u = await _userService.GetUser("igorteste@teste.com");
             Assert.True(u != null);
-            Assert.Equal(u.Name, "Igor Teste");
+            Assert.Equal("Igor Teste", u.Name);
         }
 
         [Fact]
@@ -62,7 +89,7 @@ namespace CrudUsuario.Test.Business
         {
             var u = _userService.GetUser(_guidTest);
             Assert.True(u != null);
-            Assert.Equal(u.Name, "Igor Teste");
+            Assert.Equal("Igor Teste", u.Name);
         }
 
         [Fact]
@@ -94,8 +121,8 @@ namespace CrudUsuario.Test.Business
 
             var ex = await Assert.ThrowsAsync<BusinessException>(async () => await _userService.ChangePassword(u, "teste2", "teste3"));
 
-            Assert.Equal(ex.Message, "Old password is invalid");
-            Assert.Equal(ex.Code, "error_password");
+            Assert.Equal("Old password is invalid", ex.Message);
+            Assert.Equal("error_password", ex.Code);
         }
 
         [Fact]
@@ -103,7 +130,7 @@ namespace CrudUsuario.Test.Business
         {
             var u = await _userService.GetUserPassword("igorteste@teste.com", "teste");
             Assert.True(u != null);
-            Assert.Equal(u.Name, "Igor Teste");
+            Assert.Equal("Igor Teste", u.Name);
         }
 
         [Fact]
@@ -112,8 +139,8 @@ namespace CrudUsuario.Test.Business
             var ex = Assert.ThrowsAsync<BusinessException>(async () => await _userService.GetUserPassword("igorteste@teste.com", "teste2"));
 
             Assert.True(ex != null);
-            Assert.Equal(ex.Result.Message, "E-mail or password is incorrect");
-            Assert.Equal(ex.Result.Code, "invalid_credentials");
+            Assert.Equal("E-mail or password is incorrect", ex.Result.Message);
+            Assert.Equal("invalid_credentials", ex.Result.Code);
         }
 
         [Fact]
@@ -122,8 +149,8 @@ namespace CrudUsuario.Test.Business
             var ex = Assert.ThrowsAsync<BusinessException>(async () => await _userService.GetUserPassword("igorteste44@teste.com", "teste"));
 
             Assert.True(ex != null);
-            Assert.Equal(ex.Result.Message, "E-mail or password is incorrect");
-            Assert.Equal(ex.Result.Code, "invalid_credentials");
+            Assert.Equal("E-mail or password is incorrect", ex.Result.Message);
+            Assert.Equal("invalid_credentials", ex.Result.Code);
         }
 
         private async Task PopulateDB()
@@ -161,7 +188,7 @@ namespace CrudUsuario.Test.Business
         {
             DbContextOptions<ApplicationDbContext> options;
             var b = new DbContextOptionsBuilder<ApplicationDbContext>();
-            b.UseInMemoryDatabase("DemoMemory", null);
+            b.UseInMemoryDatabase("DemoMemory" + new string[] { }.GetHashCode().ToString(), null);
             options = b.Options;
             return new ApplicationDbContext(options);
         }

@@ -15,7 +15,7 @@ namespace CrudUsuario
         public SecurityKey Key { get; }
         public SigningCredentials Credentials { get; set; }
 
-        public JwtConfiguration(IConfiguration configuration)
+        public JwtConfiguration()
         {
             using (var provider = new RSACryptoServiceProvider(2048))
             {

@@ -33,13 +33,26 @@ namespace CrudUsuario.Controllers
 
 
         [HttpGet("{id}")]
-        public ActionResult Get(Guid id)
+        public IActionResult Get(Guid id)
         {
             var user = _userService.GetUser(id);
             if (user != null)
                 return Ok(_mapper.Map<UserResponse>(user));
 
             return NotFound();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var user = _userService.GetUser(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            await _userService.Remove(user);
+            return NoContent();
         }
 
 
@@ -64,7 +77,7 @@ namespace CrudUsuario.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel resetPassword)
         {
-            
+
             var userLogged = ControllerContext.HttpContext.User.Identity.Name;
 
             var user = await _userService.GetUser(userLogged);
@@ -74,13 +87,11 @@ namespace CrudUsuario.Controllers
 
             await _userService.ChangePassword(user, resetPassword.Password, resetPassword.NewPassword);
 
-            return new CreatedResult($"api/user/{user.Id}", new UserResponse
+            return Ok(new
             {
-                Email = user.Email,
-                Id = user.Id,
-                Name = user.Name
+                message = "Password changed successfully"
             });
         }
-        
+
     }
 }

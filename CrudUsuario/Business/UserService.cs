@@ -66,5 +66,12 @@ namespace CrudUsuario.Business
         }
 
         public async Task<IEnumerable<User>> List() => await _context.Users.ToListAsync();
+
+        public async Task Remove(User user)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+                
+        }
     }
 }
